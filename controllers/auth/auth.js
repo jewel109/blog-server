@@ -1,6 +1,7 @@
 const User = require("../../model/user");
 const { sendToken } = require("../../helpers/auth/tokenHelper");
 const { comparePassword } = require("../../helpers/inputHelper");
+const { sendErrorStatus, sendStatus } = require("../../helpers/httpError");
 
 const getPrivateData = async (req, res, next) => {
   try {
@@ -20,19 +21,27 @@ const register = async (req, res, next) => {
 
   try {
     if (!email || !password) {
-      throw Error("please fill all field");
+      return sendStatus(res, 404, { message: "no email and password is found" })
     }
-    
+
 
     const user = await User.findOne({ email });
+
+
     if (user) {
-      throw Error("This email is already registered");
+
+      return sendStatus(res, 404, { message: "user is already registered with this email" })
+
     }
 
+
     if (password.length < 4) {
-      throw Error("make sure password lenght is not less than 4");
+
+      return sendStatus(res, 404, { message: "password is less than 4 " })
+
     }
-    const newUser = await new User({
+
+    const newUser = new User({
       username,
       email,
       password,
@@ -40,8 +49,10 @@ const register = async (req, res, next) => {
 
     await newUser.save();
 
-    sendToken(newUser, 201, res, "registered successfully");
+    sendToken(newUser, 201, res);
+
   } catch (err) {
+
     console.log(`server error in register //${err}//`);
     res.status(500).json({ message: "Server error ", error: `${err}` });
   }
@@ -52,23 +63,23 @@ const login = async (req, res, next) => {
 
   try {
     if (!email || !password) {
-      throw Error("please fill all field");
+      return sendStatus(res, 404, { message: "no email and password is provided" })
     }
 
-   
+
 
     const user = await User.findOne({ email }).select("+password");
 
     if (password.length < 4) {
-      throw Error("make sure password lenght is not less than 4");
+      return sendStatus(res, 404, { message: "password length is less than 4" })
     }
     if (!user) {
-      throw Error("No user found");
+      return sendStatus(res, 404, { message: "no user found" })
     } else if (!comparePassword(password, user.password)) {
-      throw Error("User password doesn't match");
+      return sendStatus(res, 404, { message: "password does'nt mass" })
     }
 
-    return sendToken(user, 201, res, "logged in successfully");
+    return sendToken(user, 201, res);
   } catch (err) {
     console.log(`error in login ${err}`);
     res.status(500).json({ message: "Server error", error: `${err}` });
@@ -98,14 +109,14 @@ const forgetPassword = async (req, res, next) => {
     const requestPasswordURI =
       `${URI_CLIENT}resetpassword?resetPasswordToken=${resetPasswordToken}`;
 
-    const emailTemplate ={ 
-      from:process.env.MAIL_USERNAME,
-      to:resetEmail,
-      subject:"Test",
-      html:`
+    const emailTemplate = {
+      from: process.env.MAIL_USERNAME,
+      to: resetEmail,
+      subject: "Test",
+      html: `
   <h3 style="color: red" > Reset your password </h3>
   <p>This <a href=${requestPasswordURI} target="_blank">link </a>will expire in 1 hours</P>
-`} 
+`}
     await sendMail(emailTemplate);
 
     return res.status(200).json({
