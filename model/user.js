@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const dotenv = require('dotenv')
+
+dotenv.config("../.env")
+
+
+
 
 const expireDate = "1h";
 
@@ -62,7 +68,7 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function(next) {
+UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
@@ -71,8 +77,11 @@ UserSchema.pre("save", async function(next) {
   next();
 });
 
-UserSchema.methods.generateJwtFromUser = function() {
-  const { JWT_SECRET } = process.env
+UserSchema.methods.generateJwtFromUser = function () {
+  // console.log("jwt ", process.env.JWT_SECRET)
+
+  const JWT_SECRET = process.env.JWT_SECRET
+  console.log(JWT_SECRET)
   const payload = {
     id: this._id,
     name: this.username,
@@ -82,7 +91,7 @@ UserSchema.methods.generateJwtFromUser = function() {
   return token;
 };
 
-UserSchema.methods.getResetPasswordFromUser = function() {
+UserSchema.methods.getResetPasswordFromUser = function () {
   const RESET_PASS_EX = 60;
   const randomHex = crypto.randomBytes(20).toString("hex");
   const resetPasswordToken = crypto
