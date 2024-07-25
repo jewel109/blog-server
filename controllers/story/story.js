@@ -7,13 +7,18 @@ const { objectId, default: mongoose } = require("mongoose")
 const { handleError } = require("../../helpers/libraries/handleError")
 const User = require("../../model/user")
 const Comment = require("../../model/comment")
+const { sendStatusError } = require("../../helpers/httpError")
 
 
 
 
-const addStory = ErrorWrapper(async (req, res, next) => {
+const addStory = async (req, res, next) => {
 
   const { title, content } = req.body
+
+  if (!title || !content) return sendStatusError(res, 404, "no title or content provided")
+
+  if (content.length < 10) return sendStatusError(res, 404, "content is less then 10 character")
 
   let wordCount = content.trim().split(/\s+/).length
 
@@ -43,7 +48,7 @@ const addStory = ErrorWrapper(async (req, res, next) => {
   }
 
 
-})
+}
 
 const getAllStories = ErrorWrapper(async (req, res, next) => {
   try {
