@@ -11,7 +11,7 @@ dotenv.config({
 
 
 // console.log(" testing token for create ", testingToken)
-db()
+db.connectingDB()
 
 beforeAll(async () => {
   await Story.deleteMany({})

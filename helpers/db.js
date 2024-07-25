@@ -2,8 +2,9 @@ const mongoose = require("mongoose")
 
 async function connectingDB() {
   try {
-    if (process.env.env == "testing") {
+    if (process.env.ENV == "testing") {
       mongoose.connect("mongodb://localhost:27017/blog-app-testing");
+      console.log("we are in test environment")
     } else {
 
       mongoose.connect("mongodb://localhost:27017/blog-app");
@@ -15,4 +16,4 @@ async function connectingDB() {
 
 }
 
-module.exports = connectingDB
+module.exports = { connectingDB }

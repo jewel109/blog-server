@@ -1,6 +1,7 @@
 const express = require("express")
 const dotenv = require('dotenv')
 const db = require("./helpers/db")
+const { connectingDB } = require("./helpers/db")
 const indexRoute = require('./routes/index')
 const cors = require("cors")
 const app = express()

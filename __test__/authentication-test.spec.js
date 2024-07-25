@@ -11,7 +11,7 @@ let testingToken = null
 dotenv.config({
   path: ".env"
 })
-db()
+db.connectingDB()
 
 let token = null
 beforeAll(async () => {
