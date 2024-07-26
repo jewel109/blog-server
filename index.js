@@ -39,7 +39,7 @@ app.use(morgan(function (tokens, req, res) {
 )
 app.use('/', indexRoute)
 
-app.get('*', function (req, res) {
+app.use('*', function (req, res) {
   res.status(404).json({
     message: "The route is missing"
   });

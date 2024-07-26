@@ -6,7 +6,6 @@ const user = require("../model/user")
 // const { expect } = require("chai")
 const db = require("../helpers/db")
 
-let testingToken = null
 
 dotenv.config({
   path: ".env"
@@ -66,4 +65,3 @@ describe("Use should get access to route", () => {
 })
 
 
-module.exports = { testingToken }

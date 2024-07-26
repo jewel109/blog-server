@@ -6,6 +6,7 @@ const chalk = require("chalk")
 const CustomError = require("../../middlewares/Error/CustomError")
 const { default: mongoose, Promise } = require("mongoose")
 const handleError = require("../../helpers/libraries/handleError")
+const { sendStatusError } = require("../../helpers/httpError")
 
 const log = console.log
 
@@ -17,15 +18,15 @@ const addNewCommentToStory = ErrorWrapper(async (req, res, next) => {
   console.log("content " + content, "slug " + slug)
 
   if (!slug || !content) {
-    return next(new CustomError("client didn't provide valid data")
-    )
+    return sendStatusError(res, 404, "client didn't provide valid data")
+
   }
   try {
     const story = await Story.findOne({ slug })
     if (!story) {
-      return next(new CustomError("no story found"))
+      return sendStatusError(res, 404, "no story found")
     }
-    log(chalk.yellow(story))
+    // log(chalk.yellow(story))
     const comment = await Comment.create({
       story: story._id,
       content,
@@ -74,7 +75,7 @@ const totalCommentOfaUser = async (req, res, next) => {
     console.log(story)
 
     res.status(200).json({
-      stories:story, total: comment.length,storyLength:story.length, comments:comment
+      stories: story, total: comment.length, storyLength: story.length, comments: comment
     })
 
   } catch (error) {
@@ -205,7 +206,7 @@ const getAllCommentByStory = ErrorWrapper(async (req, res, next) => {
 
         }
       }
-    ], function(err, resp) {
+    ], function (err, resp) {
       if (err) {
         return res.status(500).json({
           message: `${err}`

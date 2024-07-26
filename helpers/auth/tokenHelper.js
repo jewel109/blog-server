@@ -5,7 +5,7 @@ const isTokenIncluded = (req, res) => {
 
   // console.log(`in isTokenIncluded ${req}`)
   // console.log('in req.headers ' + req.headers.authrization)
-  console.log(req.headers)
+  // console.log(req.headers)
 
   if (!req.headers.authorization) {
     //console.log("authorization in header is not found")
