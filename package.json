@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index --watchAll",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --config ./jest.config.js --watchAll"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "amqplib": "^0.10.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -26,8 +28,10 @@
     "slugify": "^1.6.5"
   },
   "devDependencies": {
-    "chai": "^5.1.1",
+    "@shelf/jest-mongodb": "^4.3.2",
     "jest": "^28.1.0",
+    "mocha": "^10.6.0",
+    "mongodb-memory-server": "^9.4.1",
     "nodemon": "^2.0.18",
     "supertest": "^6.2.3"
   }
