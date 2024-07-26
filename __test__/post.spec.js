@@ -3,6 +3,8 @@ const request = require('supertest')
 const dotenv = require('dotenv')
 const { testingToken } = require("./authentication-test.spec")
 const Story = require("../model/story")
+const { default: mongoose } = require("mongoose")
+const User = require("../model/user")
 
 
 dotenv.config({
@@ -15,6 +17,26 @@ db.connectingDB()
 
 beforeAll(async () => {
   await Story.deleteMany({})
+})
+
+describe("Creating many user", () => {
+
+  it("Should return sucess", async () => {
+
+    try {
+
+      const data = await User.insertMany([
+        { username: "raihan", email: "raihan@gamil.com", password: "1235" },
+        { username: "rana", email: "rana@gmail.com", password: "1235" },
+        { username: "milon", email: "milon@gmail.com", password: "1235" },
+        { username: "ruma", email: "ruma@gmail.com" }
+      ])
+      console.log(data)
+    } catch (error) {
+
+      console.log(error.message)
+    }
+  })
 })
 
 describe("create a post ", () => {
