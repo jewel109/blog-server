@@ -94,7 +94,7 @@ const detailStory = async (req, res, next) => {
   try {
     const { slug } = req.params;
 
-    if (!slug) next("no slug  is provided")
+    if (!slug) return sendStatusError(res, 404, "no slug  is provided")
     const story = await Story.findOne({
       slug
     }).catch(handleError)
@@ -108,7 +108,7 @@ const detailStory = async (req, res, next) => {
     })
   } catch (error) {
     console.error(error)
-    next(error)
+    sendStatusError(res, 500, error)
   }
 
 }
