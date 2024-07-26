@@ -9,11 +9,11 @@ const isTokenIncluded = (req, res) => {
 
   if (!req.headers.authorization) {
     //console.log("authorization in header is not found")
-    sendStatusError(res, 404, "authrization in headers is not found")
+    return sendStatusError(res, 404, "authrization in headers is not found")
   } else if (!req.headers.authorization.startsWith("Bearer")
   ) {
 
-    sendStatusError(res, 404, "no token in authorization")
+    return sendStatusError(res, 404, "no token in authorization")
   }
   return (req.headers.authorization && req.headers.authorization.startsWith("Bearer"))
 
@@ -25,14 +25,14 @@ const getAccessTokenFromHeader = (req, res) => {
   const authorization = req.headers.authorization;
   // console.log(`authrization=${authrization}`)
   if (!authorization) {
-    sendStatusError(res, 404, "not valid authorization")
+    return sendStatusError(res, 404, "not valid authorization")
   }
   const accessToken = authorization.split(" ")[1];
   if (accessToken === "null") {
-    sendStatusError(res, 404, "accessToken is null")
+    return sendStatusError(res, 404, "accessToken is null")
   }
   if (!accessToken) {
-    sendStatusError(res, 404, "accessToken is not found")
+    return sendStatusError(res, 404, "accessToken is not found")
   }
   console.log(`access token ${accessToken}`)
   return accessToken;

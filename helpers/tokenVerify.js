@@ -6,7 +6,7 @@ const verifyToken = (token) => {
     return { decoded: decoded, tokenError: null }
   } catch (error) {
     console.log(error)
-    return { decoded: null, tokenError: error.message }
+    return { decoded: null, tokenError: error }
   }
 }
 

@@ -17,15 +17,15 @@ const getAccessToRoute = asyncError(async (req, res, next) => {
     // console.log(JWT_SECRET)
 
     if (!isTokenIncluded(req, res)) {
-      log(chalk("no token found"))
-      next("no token found")
+      // log(chalk("no token found"))
+      return sendStatusError(res, 404, "no token found")
     }
 
     const accessToken = getAccessTokenFromHeader(req, res)
 
     if (accessToken === 'null') {
 
-      return res(res, 404, "accessToken is null")
+      return sendStatusError(res, 404, "accessToken is null")
     } else if (accessToken != 'null') {
       console.log(accessToken)
 
