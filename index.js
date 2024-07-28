@@ -1,6 +1,6 @@
 const express = require("express")
 const dotenv = require('dotenv')
-const { connectingDB } = require("./helpers/db")
+const { connectingDB, connectToampqplib } = require("./helpers/db")
 const indexRoute = require('./routes/index')
 const cors = require("cors")
 const app = express()
@@ -20,6 +20,7 @@ app.use(cors({
   "Access-Control-Allow-Origin": "*"
 }))
 connectingDB()
+connectToampqplib()
 app.use(express.json())
 
 
