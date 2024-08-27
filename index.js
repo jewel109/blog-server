@@ -1,26 +1,25 @@
 const express = require("express")
 const dotenv = require('dotenv')
-const { connectingDB, connectToampqplib } = require("./helpers/db")
+const { connectingToDB, kafkaAdmin, } = require("./helpers/db")
 const indexRoute = require('./routes/index')
 const cors = require("cors")
 const app = express()
-const logger = require('./helpers/logger/logger')
 const morgan = require("morgan")
 const captureResponseBody = require("./helpers/resmiddleware")
 
-//logger('we are in ', 'index.js')
+
 
 dotenv.config({
-  path: ".env"
+  path: "dev.env"
 })
-console.log(process.env.PORT, process.env.TESTING_URL, process.env.JWT_SECRET)
+// console.log(process.env.PORT, process.env.TESTING_URL, process.env.JWT_SECRET)
 
 
+connectingToDB()
 app.use(cors({
   "Access-Control-Allow-Origin": "*"
 }))
-connectingDB()
-connectToampqplib()
+
 app.use(express.json())
 
 
@@ -58,4 +57,3 @@ app.listen(port, () => {
   console.log(`server listening on port ${port}`)
 })
 
-module.exports = app 

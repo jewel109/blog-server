@@ -5,11 +5,12 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+
   sendingTo: {
     type: mongoose.Types.ObjectId,
     required: true
   },
-  read: {
+  seen: {
     type: Boolean,
     default: false
   }

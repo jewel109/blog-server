@@ -8,26 +8,28 @@ const db = require("../helpers/db")
 
 
 dotenv.config({
-  path: ".env"
+  path: "dev.env"
 })
-db.connectingDB()
+db.connectingToDB()
 
-let token = null
+
 beforeAll(async () => {
 
   const data = await user.deleteMany({})
 
   // console.log(data)
 })
+
+
+
+
 describe("register a user ", () => {
   it("should create a jwt token", async () => {
 
     const response = await request(baseUrl).post("auth/register").send({ username: "jewels", email: "wj@gmail.com", password: "1235" })
 
     // console.log(response.body.token)
-    token = response.body.token
 
-    testingToken = response.body.token
     process.env.TESTING_TOKEN = response.body.token
     // expect(response.body).toBe({})
     expect(response.status).toBe(201)
@@ -45,10 +47,8 @@ describe("register a user ", () => {
     expect(response.body).toHaveProperty("success")
     expect(response.status).toBe(201)
   })
-})
 
 
-describe("Use should get access to route", () => {
 
 
 

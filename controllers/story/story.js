@@ -10,6 +10,8 @@ const Comment = require("../../model/comment")
 const { sendStatusError } = require("../../helpers/httpError")
 
 const amqplib = require("amqplib")
+const { kafka } = require("../../middlewares/auth/accessRoute")
+const { createPostTopic } = require("../../config")
 
 let channel;
 
@@ -42,41 +44,22 @@ const addStory = async (req, res, next) => {
       readTime
     })
     if (newStory) {
-      // amqplib.connect('amqp://localhost', (err, connection) => {
-      //   if (err) {
-      //     console.error('Error connecting to RabbitMQ:', err);
-      //     return;
-      //   }
-      //   console.log("in rabbitmq")
-      //
-      //   connection.createChannel((err, ch) => {
-      //     if (err) {
-      //       console.error('Error creating channel:', err);
-      //       return;
-      //     }
-      //
-      //     channel = ch;
-      //
-      //
-      //
-      //   });
-      //
-      // });
-      //
-      try {
-        const connect = await amqplib.connect("amqp://localhost")
 
-        channel = await connect.createChannel()
-        channel.assertQueue("CREATE_POST", 'direct', { durable: false });
-        channel.sendToQueue("CREATE_POST", Buffer.from(JSON.stringify(newStory)))
-        // console.log("i am called")
+
+      const producer = kafka.producer()
+
+      await producer.connect()
+
+      const pro = await producer.send({
+        topic: createPostTopic,
+        messages: [
+          { value: JSON.stringify({ postId: newStory._id, userId: req.user._id }) }
+        ]
+      })
+      console.log("story adding ", pro)
 
 
 
-      } catch (error) {
-
-        console.log(error)
-      }
     }
     // const data = await channel.consume('FOUND_POST')
 

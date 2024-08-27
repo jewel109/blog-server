@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const dotenv = require('dotenv')
 
-dotenv.config("../.env")
+dotenv.config({
+  path: "dev.env"
+})
 
 
 

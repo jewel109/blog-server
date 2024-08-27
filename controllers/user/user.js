@@ -10,6 +10,7 @@ const Message = require("../../model/message.js")
 const Notification = require("../../model/notification.js")
 const { default: mongoose } = require('mongoose')
 const handleError = require('../../helpers/libraries/handleError.js')
+const { sendStatusError } = require('../../helpers/httpError.js')
 
 const profile = ErrorWrapper(async (req, res) => {
   return res.status(200).json({
@@ -198,21 +199,25 @@ const addStoryToReadList = async (req, res, next) => {
 
 const followerOfUser = async (req, res, next) => {
   try {
-    const { username, followingUser } = req.body
+    const { followingUser } = req.body
 
+    const username = req.user.username
     let message = ''
+
 
     let userData
 
     const user = await User.findOne({ username: username }).catch(handleError)
     if (!user) {
-      next("no user found with the name")
+      return sendStatusError(res, 404, "no user found with the name")
     }
     console.log(user)
 
+    const users = await User.find({})
+    console.log("users ", users)
     const followedUser = await User.findOne({ username: followingUser }).catch(handleError)
     if (!followedUser) {
-      next("followingUser is not found")
+      return sendStatusError(res, 404, "followingUser is not found")
     }
     console.log(followedUser)
 
@@ -230,7 +235,7 @@ const followerOfUser = async (req, res, next) => {
       }, { new: true }).catch(handleError)
 
       if (!updatedUser) {
-        next("user is not updated")
+        return sendStatusError(res, 404, "user is not updated")
       }
       console.log("updated user is " + updatedUser)
 

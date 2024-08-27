@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  blog-mongodb:
+    image: mongo:latest
+    container_name: b-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  blog-kafka:
+    image: bitnami/kafka:latest
+    container_name: b-kafka
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=blog-zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - blog-zookeeper
+
+  blog-zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: b-zookeeper
+    restart: unless-stopped
+    ports:
+      - "2185:2185"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  blog-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: b-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9500:9200"
+      - "9400:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  blog-redis:
+    image: redis:latest
+    container_name: b-redis
+    restart: unless-stopped
+    ports:
+      - "6389:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  es_data:
+  redis_data:
+

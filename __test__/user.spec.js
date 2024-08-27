@@ -1,5 +1,3 @@
-
-
 const mongoose = require("mongoose")
 const request = require("supertest")
 const dotenv = require("dotenv")
@@ -24,7 +22,7 @@ beforeAll(async () => {
 })
 
 
-describe("After creating a post user newsfeed will update", () => {
+describe("user will get access to private data", () => {
 
 
   it("Should create multiple users", async () => {
@@ -67,7 +65,7 @@ describe("After creating a post user newsfeed will update", () => {
 
 
   it("should create a user ", async () => {
-    const response = await request(TESTING_URL).post("auth/register").send({ username: "jewel rana", email: "wj5@gmail.com", password: "1235" })
+    const response = await request(TESTING_URL).post("auth/register").send({ username: "jewel rana", email: "wj56@gmail.com", password: "1235" })
 
     TESTING_TOKEN = response.body.token
 
@@ -77,7 +75,7 @@ describe("After creating a post user newsfeed will update", () => {
   })
 
   it("should return a jwt token", async () => {
-    const response = await request(TESTING_URL).post("auth/login").send({ email: "wj5@gmail.com", password: "1235" })
+    const response = await request(TESTING_URL).post("auth/login").send({ email: "wj56@gmail.com", password: "1235" })
       .set('Authorization', `Bearer ${process.env.TESTING_TOKEN}`)
 
 
@@ -96,21 +94,6 @@ describe("After creating a post user newsfeed will update", () => {
     expect(response.status).toBe(200)
 
   })
-
-  it("should follow a user", async () => {
-
-    const response = await request(TESTING_URL).post("user/follow").send({ followingUser: "rana" }).set('Authorization', `Bearer ${TESTING_TOKEN}`)
-
-    console.log(response.body)
-
-  })
-
-  it("should create a post ", async () => {
-
-    const response = await request(TESTING_URL).post("story/addStory").send({ title: "great post", content: "why I am tesing do u know" }).set('Authorization', `Bearer ${TESTING_TOKEN}`)
-  })
-
-  console.log()
 })
 
 

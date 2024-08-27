@@ -1,8 +1,6 @@
 const mongoose = require("mongoose")
-const amqplib = require("amqplib")
-let channel
-
-async function connectingDB() {
+const redis = require("redis")
+async function connectingToDB() {
   try {
     if (process.env.ENV == "testing") {
       mongoose.connect("mongodb://localhost:27017/blog-app-testing");
@@ -18,32 +16,14 @@ async function connectingDB() {
 
 }
 
-async function connectToampqplib() {
-  try {
-    const connect = await amqplib.connect("amqp://localhost")
-
-    channel = await connect.createChannel()
-    channel.assertQueue("FOUND_POST", 'direct', { durable: false })
-
-    channel.consume('CREATE_POST', (msg) => {
-      console.log("data from messge broker", JSON.parse(msg.content))
-      channel.ack(msg)
-
-    })
+const redisClient = redis.createClient({ url: "redis://localhost:6389" })
 
 
-    channel.consume('FOUND_POST', (data) => {
-      console.log("data from CREATE_POST", JSON.parse(data.content))
-      channel.ack(data)
-    })
+redisClient.connect().then(() => {
+  console.log("redis is connected")
+})
 
 
 
-  } catch (error) {
 
-    console.error(error)
-  }
-
-}
-
-module.exports = { connectingDB, connectToampqplib }
+module.exports = { connectingToDB, redisClient }
