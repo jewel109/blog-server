@@ -1,11 +1,10 @@
 import express, { Express } from "express"
 
 import cors from 'cors'
-import { unKnownRouteController } from "../controller/unknownRouteController"
-import { userRouter } from "../router/userRouter"
-import { baseRouter } from "../router/baseRoute"
 import mongoose from "mongoose"
 import { mongoUrl } from "../../utils/configUtils"
+import { unKnownRouteController } from "../controller/auth/unknownRouteController"
+import { baseRouter } from "../router/baseRoute"
 
 export const setupMiddleware = async (app: Express) => {
 
