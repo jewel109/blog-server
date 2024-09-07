@@ -25,10 +25,10 @@ services:
 
   blog-zookeeper:
     image: bitnami/zookeeper:latest
-    container_name: b-zookeeper
+    container_name: blog-zookeeper
     restart: unless-stopped
     ports:
-      - "2181:2185"
+      - "2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
 
@@ -40,8 +40,8 @@ services:
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
-      - "9500:9200"
-      - "9400:9300"
+      - "9200"
+      - "9300"
     volumes:
       - es_data:/usr/share/elasticsearch/data
 
@@ -58,4 +58,3 @@ volumes:
   mongo_data:
   es_data:
   redis_data:
-
