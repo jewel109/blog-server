@@ -49,9 +49,15 @@ export const loginRouterHandler = withRequest(async (req, res) => {
 })
 
 
+export interface AuthenticatedUserT extends AuthUserT {
+  userData?: IUser
+}
 
+interface IJWtUser {
+  email: string
+}
 interface AuthUserT extends Request {
-  user?: IUser;
+  user?: IJWtUser;
 }
 export const resourceAccessController = withRequest<AuthUserT>(async (req, res, next) => {
 
@@ -71,7 +77,7 @@ export const resourceAccessController = withRequest<AuthUserT>(async (req, res, 
     if (!data || typeof data === 'string') return sendResponse(res, { status: 'error', statusCode: 401, msg: "jwt can't verify the token" })
 
 
-    req.user = data as IUser
+    req.user = data as IJWtUser
     return next()
 
 
@@ -94,4 +100,22 @@ export const getResource = withRequest<AuthUserT>(async (req, res) => {
     sendResponse(res, { msg: e.message, statusCode: 500 })
 
   }
+})
+
+
+export const authenticatedUserController = withRequest<AuthenticatedUserT>(async (req, res, next) => {
+  try {
+    const { email } = req.user as IJWtUser
+
+    const { statusCode, status, data, msg } = await userService.findbyEmail(email)
+
+    if (status === "error") return sendResponse(res, { msg, statusCode })
+    req.userData = data
+    next()
+  } catch (error) {
+    const e = error as Error
+    return sendResponse(res, { msg: e.message, statusCode: 500 })
+  }
+
+
 })
