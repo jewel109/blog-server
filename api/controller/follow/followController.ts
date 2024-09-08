@@ -1,28 +1,42 @@
 import { userService } from "../../../core/app/repository/userRepository";
+import { IUser } from "../../../core/doamin/model/userModel";
 import { AuthenticatedRequest } from "../../../utils/authUtils";
 import { sendResponse, withRequest } from "../../../utils/controllerUtils";
 import { SERVER_ERR_MSG, SUCCESS_RES_MSG } from "../../../utils/responseDataUtils";
+import { AuthenticatedUserT } from "../auth/authController";
 
 
 
 
-export const followingController = withRequest<AuthenticatedRequest>(async (req, res) => {
+export const followingController = withRequest<AuthenticatedUserT>(async (req, res) => {
 
   try {
-    const user = req.user
-    // console.log("user ", user)
-
+    const user = req.userData
+    console.log("user ", user)
     if (!user) return sendResponse(res, { msg: "User is not found" })
     const { followeeEmail } = req.body
     // console.log(followeeEmail)
     if (!followeeEmail) return sendResponse(res, { msg: "followeeEmail is not provided" })
 
-    const { data: userData } = await userService.findbyEmail(user.email)
+    const { data: followeeData } = await userService.findbyEmail(followeeEmail)
 
-    if (!userData) return sendResponse(res, { msg: "user is not found" })
+    if (!followeeData) return sendResponse(res, { msg: "no user is registered with followeeEmail" })
 
+    console.log("followeeData ", followeeData)
+
+    const { data: isfollowed, msg: isFollowedMsg, status: followStatus, statusCode: followStatusCode } = await userService.isUserFollowed(user, followeeData)
+
+    console.log("isfollowed ? ", isfollowed)
+
+    console.log("isFollowedMsg ", isFollowedMsg)
+    if (isfollowed) {
+      return sendResponse(res, { msg: isFollowedMsg, status: followStatus, statusCode: followStatusCode, data: isfollowed })
+    }
+
+    const { msg, data, statusCode, status } = await userService.addToFollowingField(user, followeeData)
+
+    return sendResponse(res, { msg, status, statusCode, data })
     // console.log(userData)
-    return sendResponse(res, { msg: "ok" })
   } catch (error) {
     const e = error as Error
     sendResponse(res, { msg: e.message, data: SERVER_ERR_MSG, statusCode: 500 })
