@@ -149,10 +149,28 @@ describe("Handling following a user", () => {
     const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
 
     const tBody = body as ErrorResponseForTest
-    expect(tBody.msg).toBe("You are now follwing ")
+    expect(tBody.msg).toBe("Great you are now following ")
     expect(tBody.data).not.toBe(null)
     expect(statusCode).toBe(STATUS_CODE_201)
 
 
   })
+  test("should have follow  ", async () => {
+
+    const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
+
+    const tBody = body as ErrorResponseForTest
+    console.log(tBody.data)
+    expect(tBody.msg).toBe("so you are now following")
+    expect(tBody.data).not.toBe(null)
+    expect(statusCode).toBe(STATUS_CODE_201)
+
+
+  })
+
+  test("should make a notification", async () => {
+
+  })
+
+
 })
