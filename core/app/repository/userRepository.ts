@@ -1,9 +1,9 @@
-import { IUser, userModel } from "../../doamin/model/userModel";
-import { ERR_STATUS, SERVER_ERR_MSG, STATUS_CODE_201, STATUS_CODE_500, SUCCESS_RES_MSG, SUCCESS_STATUS, } from "../../../utils/responseDataUtils"
+import jwt from 'jsonwebtoken';
+import { Types } from "mongoose";
 import { compareHashPassword, hashPassword } from "../../../utils/authUtils";
-import jwt from 'jsonwebtoken'
 import { jwtSecret } from "../../../utils/configUtils";
-import mongoose, { Types } from "mongoose";
+import { STATUS_CODE_201, STATUS_CODE_500, SUCCESS_RES_MSG, SUCCESS_STATUS } from "../../../utils/responseDataUtils";
+import { IUser, userModel } from "../../doamin/model/userModel";
 
 type RepositoryResponse<T = any> = {
   status: "success" | "error";
