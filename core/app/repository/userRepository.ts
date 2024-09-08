@@ -1,8 +1,9 @@
-import { userModel } from "../../doamin/model/userModel";
+import { IUser, userModel } from "../../doamin/model/userModel";
 import { ERR_STATUS, SERVER_ERR_MSG, STATUS_CODE_201, STATUS_CODE_500, SUCCESS_RES_MSG, SUCCESS_STATUS, } from "../../../utils/responseDataUtils"
 import { compareHashPassword, hashPassword } from "../../../utils/authUtils";
 import jwt from 'jsonwebtoken'
 import { jwtSecret } from "../../../utils/configUtils";
+import mongoose, { Types } from "mongoose";
 
 type RepositoryResponse<T = any> = {
   status: "success" | "error";
@@ -77,7 +78,7 @@ export default class UserRepository {
 
       if (!matchedPass) return createDefaultResponse({ msg: "password is not matched" })
 
-      const token = jwt.sign({ name: emailExist.name, email: email }, jwtSecret)
+      const token = jwt.sign({ email: email }, jwtSecret)
       if (!token) return createDefaultResponse({ msg: "Token is not  created" })
 
 
@@ -86,6 +87,54 @@ export default class UserRepository {
     } catch (e) {
       const er = e as Error
       return createDefaultResponse({ msg: er.message, statusCode: STATUS_CODE_500 })
+    }
+  }
+
+  async isUserFollowed(user: IUser, followeeData: IUser): Promise<RepositoryResponse> {
+
+    try {
+
+      console.log("user ", user)
+      console.log("followee ", followeeData)
+      const data = await userModel.findOne({ email: user.email, following: { $in: [new Types.ObjectId(followeeData._id)] } })
+
+      console.log("user having the following ", data)
+
+      if (!data) return createDefaultResponse({ data: false, statusCode: 200, status: "success", msg: "false" })
+      return createDefaultResponse({ msg: "so you are now following", statusCode: 201, status: "success", data: true })
+    } catch (error) {
+      const e = error as Error
+      return createDefaultResponse({ msg: e.message, statusCode: 500 })
+    }
+  }
+
+  async addToFollowingField(user: IUser, followeeData: IUser): Promise<RepositoryResponse> {
+    try {
+
+      const foundFolloweeData = await userModel.findOneAndUpdate({ email: user.email }, {
+        $addToSet: {
+          following: new Types.ObjectId(followeeData._id)
+        },
+      }, { new: true })
+      console.log('followeeData ', foundFolloweeData)
+      if (!foundFolloweeData) {
+        return createDefaultResponse({ msg: "you have not follwing yet", statusCode: 403 })
+      }
+      return createDefaultResponse({ msg: "Great you are now following ", statusCode: 201, status: 'success', data: foundFolloweeData })
+
+    } catch (error) {
+      const e = error as Error
+      return createDefaultResponse({ msg: e.message, statusCode: 500 })
+    }
+  }
+
+  async romoveFromFollowingField(user: IUser, followee: IUser): Promise<RepositoryResponse> {
+    try {
+      return createDefaultResponse({ msg: "great" })
+    } catch (error) {
+      const e = error as Error
+
+      return createDefaultResponse({ msg: e.message })
     }
   }
 }
