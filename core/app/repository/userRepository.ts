@@ -4,26 +4,9 @@ import { compareHashPassword, hashPassword } from "../../../utils/authUtils";
 import { jwtSecret } from "../../../utils/configUtils";
 import { STATUS_CODE_201, STATUS_CODE_500, SUCCESS_RES_MSG, SUCCESS_STATUS } from "../../../utils/responseDataUtils";
 import { IUser, userModel } from "../../doamin/model/userModel";
+import { createDefaultResponse, RepositoryResponse } from './repoUtils';
 
-type RepositoryResponse<T = any> = {
-  status: "success" | "error";
-  msg: string;
-  data: T | null;
-  statusCode: number;
-}
-function createDefaultResponse<T>({
-  status = "error",
-  msg = "An error occurred", // Default message
-  data = null,
-  statusCode = 404,          // Default HTTP status code to 404
-}: Partial<RepositoryResponse<T>> = {}): RepositoryResponse<T> {
-  return {
-    status,
-    msg,
-    data,
-    statusCode,
-  };
-}
+
 type UserT = {
   name: string,
   email: string,

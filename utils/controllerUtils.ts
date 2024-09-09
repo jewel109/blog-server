@@ -22,7 +22,7 @@ export const withRequest = <T extends Request>(handler: Handler<T>) => {
   };
 };
 
-export interface ErrorResponseForTest {
+export interface ResponseForTest {
   status: string;
   msg: string;
   data: any | null;
