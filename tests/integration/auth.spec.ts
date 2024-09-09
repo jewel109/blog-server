@@ -1,12 +1,16 @@
-import request from 'supertest'
-import { mongoUrl, url } from '../../utils/configUtils'
-import { ErrorResponseForTest } from '../../utils/controllerUtils'
-import { ERR_STATUS, STATUS_CODE_200, STATUS_CODE_201, SUCCESS_RES_MSG, SUCCESS_STATUS } from '../../utils/responseDataUtils'
 import mongoose from 'mongoose'
-import { userModel } from '../../core/doamin/model/userModel'
+import request from 'supertest'
+import { UserI, userModel } from '../../core/doamin/model/userModel'
+import { mongoUrl, url } from '../../utils/configUtils'
+import { ResponseForTest } from '../../utils/controllerUtils'
+import { STATUS_CODE_200, STATUS_CODE_201, SUCCESS_RES_MSG, SUCCESS_STATUS } from '../../utils/responseDataUtils'
 
+export const userData: UserI = {
+  name: "jewel", email: "jewel@gmail.com", password: "1253"
+}
 
-
+export const registerTest = async (userData: UserI) => await request(url).post('/api/v1/register').send(userData)
+export const loginTest = async (userData: UserI) => await request(url).post('/api/v1/login').send(userData)
 beforeAll(async () => {
 
   await mongoose.connect(String(mongoUrl))
@@ -29,6 +33,7 @@ describe("Handling invalid route request", () => {
 
 })
 
+
 describe("Handling register route request", () => {
 
   beforeAll(async () => {
@@ -37,9 +42,8 @@ describe("Handling register route request", () => {
 
   test("Sholud return success status with 201", async () => {
 
-    const { body, statusCode } = await request(url).post('/api/v1/register').send({ name: "jewel", email: 'jewel@gmail.com', password: "1253" })
-
-    const typeBody = body as ErrorResponseForTest
+    const { body, statusCode } = await registerTest(userData)
+    const typeBody = body as ResponseForTest
 
     console.log(typeBody.msg)
 
@@ -60,9 +64,8 @@ describe("Handling Login route", () => {
 
   test("Sholud return success status with 201", async () => {
 
-    const { body, statusCode } = await request(url).post('/api/v1/register').send({ name: "jewel", email: 'jewel@gmail.com', password: "1253" })
-
-    const typeBody = body as ErrorResponseForTest
+    const { body, statusCode } = await registerTest(userData)
+    const typeBody = body as ResponseForTest
 
     console.log(typeBody.msg)
 
@@ -73,9 +76,8 @@ describe("Handling Login route", () => {
 
   })
   test("should return success status having the token with 201 statusCode", async () => {
-    const { body, statusCode } = await request(url).post("/api/v1/login").send({ email: "jewel@gmail.com", password: "1253" })
-
-    const tBody = body as ErrorResponseForTest
+    const { body, statusCode } = await loginTest(userData)
+    const tBody = body as ResponseForTest
     console.log(tBody)
     expect(tBody.msg).toBe(SUCCESS_RES_MSG)
     expect(tBody.data.token).not.toBe(null)
@@ -88,9 +90,8 @@ describe("Middleware for accessing to private route", () => {
 
   let token = ""
   beforeAll(async () => {
-    const { body, statusCode } = await request(url).post("/api/v1/login").send({ email: "jewel@gmail.com", password: "1253" })
-
-    const tBody = body as ErrorResponseForTest
+    const { body, statusCode } = await loginTest(userData)
+    const tBody = body as ResponseForTest
     console.log(tBody)
     expect(tBody.msg).toBe(SUCCESS_RES_MSG)
     expect(tBody.data).not.toBe(null)
@@ -104,7 +105,7 @@ describe("Middleware for accessing to private route", () => {
 
     const { body, statusCode } = await request(url).post('/api/v1/private').set('Authorization', `bearer ${token}`)
 
-    const tBody = body as ErrorResponseForTest
+    const tBody = body as ResponseForTest
     expect(tBody.msg).toBe(SUCCESS_RES_MSG)
     expect(tBody.data).not.toBe(null)
     expect(statusCode).toBe(STATUS_CODE_200)
@@ -121,9 +122,8 @@ describe("Handling following a user", () => {
       await userModel.insertMany([
         { name: "raihan", email: "raihan@gmail.com", password: '1234' }
       ])
-      const { body, statusCode } = await request(url).post("/api/v1/login").send({ email: "jewel@gmail.com", password: "1253" })
-
-      const tBody = body as ErrorResponseForTest
+      const { body, statusCode } = await loginTest(userData)
+      const tBody = body as ResponseForTest
       // console.log(tBody)
       expect(tBody.msg).toBe(SUCCESS_RES_MSG)
       expect(tBody.data).not.toBe(null)
@@ -148,7 +148,7 @@ describe("Handling following a user", () => {
 
     const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
 
-    const tBody = body as ErrorResponseForTest
+    const tBody = body as ResponseForTest
     expect(tBody.msg).toBe("Great you are now following ")
     expect(tBody.data).not.toBe(null)
     expect(statusCode).toBe(STATUS_CODE_201)
@@ -159,7 +159,7 @@ describe("Handling following a user", () => {
 
     const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
 
-    const tBody = body as ErrorResponseForTest
+    const tBody = body as ResponseForTest
     console.log(tBody.data)
     expect(tBody.msg).toBe("so you are now following")
     expect(tBody.data).not.toBe(null)
