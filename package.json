@@ -5,7 +5,8 @@
   "main": "api/server.ts",
   "scripts": {
     "test": "NODE_ENV=test jest --watch",
-    "start":"NODE_ENV=test nodemon api/server.ts"
+    "start": "NODE_ENV=test nodemon api/server.ts",
+    "consume": " ts-node ./core/infra/kafka/eventConsumer.ts "
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.15.0",
