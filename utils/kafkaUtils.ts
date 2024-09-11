@@ -94,4 +94,9 @@ export const listTopics = async (admin: Admin): Promise<void> => {
 }
 
 
+export const initializeProducer = async (kafkaInstance: Kafka, topicName: string): Promise<Producer> => {
+  const admin = await adminCreation(kafkaInstance)
+  await createTopic(admin, topicName)
+  return await creatingProducer(kafkaInstance)
 
+}
