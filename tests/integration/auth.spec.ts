@@ -4,6 +4,9 @@ import { UserI, userModel } from '../../core/doamin/model/userModel'
 import { mongoUrl, url } from '../../utils/configUtils'
 import { ResponseForTest } from '../../utils/controllerUtils'
 import { STATUS_CODE_200, STATUS_CODE_201, SUCCESS_RES_MSG, SUCCESS_STATUS } from '../../utils/responseDataUtils'
+import { adminCreation, deleteTopic } from '../../utils/kafkaUtils'
+import { kafkaInstance } from '../../core/infra/kafka/defaults'
+
 
 export const userData: UserI = {
   name: "jewel", email: "jewel@gmail.com", password: "1253"
@@ -15,6 +18,8 @@ beforeAll(async () => {
 
   await mongoose.connect(String(mongoUrl))
   await userModel.deleteMany({})
+  const admin = await adminCreation(kafkaInstance)
+  await deleteTopic(admin, 'follow')
 })
 
 
@@ -167,7 +172,18 @@ describe("Handling following a user", () => {
 
 
   })
+  test("should have error  ", async () => {
 
+    const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihanj@gmail.com' }).set('Authorization', `bearer ${token}`)
+
+    const tBody = body as ResponseForTest
+    console.log(tBody.data)
+    expect(tBody.msg).toBe("no user is registered with followeeEmail")
+    expect(tBody.data).toBe(null)
+    expect(statusCode).toBe(STATUS_CODE_201)
+
+
+  })
   test("should make a notification", async () => {
 
   })
