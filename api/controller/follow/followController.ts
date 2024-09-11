@@ -1,10 +1,10 @@
 import { userService } from "../../../core/app/repository/userRepository";
-import { IUser } from "../../../core/doamin/model/userModel";
-import { AuthenticatedRequest } from "../../../utils/authUtils";
+import { kafkaInstance } from "../../../core/infra/kafka/defaults";
+import { ConsumingNotificationI } from "../../../core/infra/kafka/eventConsumer";
 import { sendResponse, withRequest } from "../../../utils/controllerUtils";
-import { SERVER_ERR_MSG, SUCCESS_RES_MSG } from "../../../utils/responseDataUtils";
+import { adminCreation, createTopic, creatingProducer, initializeProducer, sendingMessage } from "../../../utils/kafkaUtils";
+import { SERVER_ERR_MSG } from "../../../utils/responseDataUtils";
 import { AuthenticatedUserT } from "../auth/authController";
-
 
 
 
@@ -34,7 +34,13 @@ export const followingController = withRequest<AuthenticatedUserT>(async (req, r
     }
 
     const { msg, data, statusCode, status } = await userService.addToFollowingField(user, followeeData)
-
+    const producer = await initializeProducer(kafkaInstance, 'follow')
+    const kafkaMessage: ConsumingNotificationI = {
+      notification: msg, userEmail: user.email, followeeEmail
+    }
+    await sendingMessage(producer, 'follow', [{
+      key: JSON.stringify('follow'), value: JSON.stringify(kafkaMessage)
+    }])
     return sendResponse(res, { msg, status, statusCode, data })
     // console.log(userData)
   } catch (error) {
