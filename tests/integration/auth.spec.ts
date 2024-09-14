@@ -180,7 +180,7 @@ describe("Handling following a user", () => {
     console.log(tBody.data)
     expect(tBody.msg).toBe("no user is registered with followeeEmail")
     expect(tBody.data).toBe(null)
-    expect(statusCode).toBe(STATUS_CODE_201)
+    expect(statusCode).toBe(404)
 
 
   })
