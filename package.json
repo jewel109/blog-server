@@ -4,7 +4,7 @@
   "description": "",
   "main": "api/server.ts",
   "scripts": {
-    "test": "NODE_ENV=test jest --watch",
+    "test": "NODE_ENV=test jest --watchAll",
     "start": "NODE_ENV=test nodemon api/server.ts",
     "consume": " ts-node ./core/infra/kafka/eventConsumer.ts "
   },
