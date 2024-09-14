@@ -13,7 +13,7 @@ export function loadEnvVariables(envFilePath: string): { [key: string]: string |
 
 
 
-const { DB_USER_NAME, JWT_SECRET, DB_NAME, DB_USER_PASS, PORT, URI, REDIS_URI, ELASTIC_URI, MONGO_URI } = loadEnvVariables("../config/test.env")
+const { DB_USER_NAME, JWT_SECRET, DB_NAME, DB_USER_PASS, PORT, URI, REDIS_URI, ELASTIC_URI, MONGO_URI, KAFKA_URI } = loadEnvVariables("../config/test.env")
 
 export const dbUserName = DB_USER_NAME
 export const dbName = DB_NAME
@@ -24,4 +24,5 @@ export const jwtSecret = String(JWT_SECRET)
 export const redisUri = REDIS_URI
 export const elasticSearchUri = ELASTIC_URI
 export const mongoUrl = MONGO_URI
+export const kafkaUrl = String(KAFKA_URI)
 
