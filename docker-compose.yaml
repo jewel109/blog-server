@@ -8,18 +8,19 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  blog-kafka:
+  broker:
     image: bitnami/kafka:latest
-    container_name: b-kafka
+    container_name: broker
     restart: unless-stopped
     ports:
-      - "9093:9093"
+      - "49816:9092"
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=blog-zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "blog-zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://broker:9092,INTERNAL://broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:49816,INTERNAL://broker:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
     depends_on:
       - blog-zookeeper
 
@@ -28,9 +29,11 @@ services:
     container_name: blog-zookeeper
     restart: unless-stopped
     ports:
-      - "2181"
+      - "49815:2181"
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ALLOW_ANONYMOUS_LOGIN: "yes"
 
   blog-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
