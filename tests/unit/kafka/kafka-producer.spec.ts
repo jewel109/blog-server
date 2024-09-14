@@ -1,8 +1,9 @@
 import { Kafka, KafkaMessage } from "kafkajs"
+import { kafkaUrl } from "../../../utils/configUtils";
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['localhost:9093'],
+  brokers: [kafkaUrl],
 })
 describe("Testing Kafka Connection ", () => {
 
