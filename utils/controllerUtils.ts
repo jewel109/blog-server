@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { createDefaultResponse } from '../core/app/repository/repoUtils';
 
 interface ResponsePayload {
   statusCode?: number;
@@ -28,3 +29,22 @@ export interface ResponseForTest {
   data: any | null;
 }
 
+type Result<T> =
+  | { success: true; data: T }
+  | { success: false; error: Error };
+
+export function tcWrapper<T, A extends any[], R>(
+  f: (this: T, ...args: A) => R
+): (this: T, ...args: A) => Result<R> {
+  return function (this: T, ...args: A): Result<R> {
+    try {
+      const data = f.apply(this, args);
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error))
+      };
+    }
+  };
+}
