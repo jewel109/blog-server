@@ -151,7 +151,7 @@ describe("Handling following a user", () => {
   // and jewel will get notification that he is being followed by raihan
   test("should have success status and 201 ", async () => {
 
-    const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
+    const { body, statusCode } = await request(url).post('/api/v1/me/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
 
     const tBody = body as ResponseForTest
     expect(tBody.msg).toBe("Great you are now following ")
@@ -162,7 +162,7 @@ describe("Handling following a user", () => {
   })
   test("should have follow  ", async () => {
 
-    const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
+    const { body, statusCode } = await request(url).post('/api/v1/me/follow').send({ followeeEmail: 'raihan@gmail.com' }).set('Authorization', `bearer ${token}`)
 
     const tBody = body as ResponseForTest
     console.log(tBody.data)
@@ -174,7 +174,7 @@ describe("Handling following a user", () => {
   })
   test("should have error  ", async () => {
 
-    const { body, statusCode } = await request(url).post('/api/v1/follow').send({ followeeEmail: 'raihanj@gmail.com' }).set('Authorization', `bearer ${token}`)
+    const { body, statusCode } = await request(url).post('/api/v1/me/follow').send({ followeeEmail: 'raihanj@gmail.com' }).set('Authorization', `bearer ${token}`)
 
     const tBody = body as ResponseForTest
     console.log(tBody.data)
