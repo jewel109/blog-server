@@ -2,11 +2,11 @@ import { Kafka, KafkaConfig } from "kafkajs";
 import { creatingConsumer, creatingKafkaInstance, KafkaCustomConfig, subscribingAngConsumingMsg } from "../../../utils/kafkaUtils";
 import { userService } from "../../app/repository/userRepository";
 import mongoose from "mongoose";
-import { mongoUrl } from "../../../utils/configUtils";
+import { kafkaUrl, mongoUrl } from "../../../utils/configUtils";
 
 const config: KafkaCustomConfig = {
   clientId: "payment",
-  broker: ["localhost:9093"]
+  broker: [kafkaUrl]
 }
 
 
