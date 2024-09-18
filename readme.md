@@ -5,6 +5,7 @@
 - allows users to access real-time news feed
 - allows users to receive instant notifications
 - used event driven architecture
+- End to End test to all the api
 
 # Installation
 
@@ -44,7 +45,7 @@ Now the api server is ready
 For Test you can run
 
 ```shell
-pnpm test
+npm test
 ```
 
 ## Technology used
