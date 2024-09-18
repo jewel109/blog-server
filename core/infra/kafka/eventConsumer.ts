@@ -1,8 +1,9 @@
-import { Kafka, KafkaConfig } from "kafkajs";
+import mongoose, { Types } from "mongoose";
+import { kafkaUrl, mongoUrl } from "../../../utils/configUtils";
 import { creatingConsumer, creatingKafkaInstance, KafkaCustomConfig, subscribingAngConsumingMsg } from "../../../utils/kafkaUtils";
 import { userService } from "../../app/repository/userRepository";
-import mongoose from "mongoose";
-import { kafkaUrl, mongoUrl } from "../../../utils/configUtils";
+import { notificationService } from "../../app/repository/notificationRepository";
+import { indexNotification } from "../../../utils/elasticSearchUtils";
 
 const config: KafkaCustomConfig = {
   clientId: "payment",
@@ -40,7 +41,7 @@ const consuming = async () => {
         const userData = await userService.findbyEmail(userEmail)
         const followeeData = await userService.findbyEmail(followeeEmail)
 
-        // console.log(userData, followeeData)
+        console.log(userData, followeeData)
 
         const { status, data, msg: isFollowedMsg, statusCode } = await userService.isUserFollowed(userData.data, followeeData.data)
         if (isFollowedMsg == "so you are now following") {
@@ -49,6 +50,12 @@ const consuming = async () => {
         } else {
           console.log("can't create notification")
         }
+
+        const notificationData = await notificationService.create({ message: notification, recipientId: userData.data._id, read: false, recipientEmail: userData.data.email, recipientName: userData.data.name })
+        console.log("notificationData ", notificationData)
+
+        await indexNotification({ recipientName: userData.data.name, recipientEmail: userData.data.email, read: false, message: notification })
+
 
       } else {
         console.log("something wrong")
