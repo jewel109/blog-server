@@ -89,3 +89,9 @@ Request Header
 ```shell
 Authorization: bearer token
 ```
+
+#### why mongodb
+
+#### why redis
+
+#### why kafka
